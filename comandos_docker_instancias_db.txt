@@ -1,0 +1,13 @@
+docker run --name auth-db -p 5432:5432 -e POSTGRES_DB=auth-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=123456 postgres:11
+
+docker run --name product-db -p 5433:5432 -e POSTGRES_DB=product-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=123456 postgres:11
+
+## Observações
+## -p 5432:5432 -> a porta que fica depois dos 2 pontos é a porta interna do container enquanto a porta antes dos 2 pontos é a porta externa que ele irá mapear para conseguirmos acessar o container (a porta na minha máquina), e é por isso que a porta deles estão diferentes antes dos 2 pontos senão daria conflito de portas
+## Para ver todas as variáveis de ambiente (que são esses '-e informacoes') é só olhar em https://hub.docker.com/_/postgres
+## Se você não quiser ficar vendo logs passando na tela, basta colocar uma tag '-d' no final do comando docker 
+## Vou usar o Git bash para dar os comandos docker, assim posso dar uns comandos linux
+## use "docker ps" para listar os containers
+## ao fazer o "docker run", foi necessário que eu estivesse logado no site do docker, e talvez eu tenha que abrir o meu docker desktop
+
+CONTINUAR A PARTIR DOS 7min de aula para fazer a conexão com o banco de dados
