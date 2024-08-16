@@ -24,3 +24,9 @@ docker run --name sales_rabbit -p 5672:5672 -p 25676:25676 -p 15672:15672 rabbit
 ## importante que o PostgreSQL esteja desinstalado ou vão ficar dando conflitos
 ## você consegue acessar o seu Rabbit digitando "localhost:15672" e a seguir usar usuário/senha padrão, que é guest/guest
 ## ainda sobre o rabbit, se eu quisesse acessar ele pela porta 3000 em vez da porta 15672, bastava eu colocar " -p 3000/15672" em vez de " -p 15672/15672" e lá no navegador eu colocaria "localhost:3000"
+
+## Sobre o docker-compose
+## 1. rodar o comando 'docker-compose up --build'
+## 2. esse comando deve ser rodado no mesmo diretório em que este arquivo está
+## 3. o arquivo 'docker-compose' deve estar na raiz do projeto
+## 4. se eu rodar o comando como 'docker-compose up --build -d', ele vai rodar sem exibir os logs
