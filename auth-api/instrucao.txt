@@ -1,0 +1,29 @@
+Foram feitas as seguintes ações para construção dessa API:
+1) criamos essa pasta chamada "auth-api"
+2) abrimos o terminal dentro dessa pasta (que é onde estamos agora) e demos o comando 'yarn init -y'
+    - com o comando 'yarn init' nós iniciaremos com a criação de um arquivo package.json
+    - com a flag '-y' você pula toda a parte inicial do yarn onde você define licensa, versão porque não precisaremos disso agora. Nossa intenção no momento é criar um arquivo package.json 
+    - interessante dizer que há várias flags interessantes a serem vistas no yarn, daí basta olhar documentação
+3) a seguir, dei o comando 'code .' só para ele abrir uma página do VSCode, mas como no meu caso não deu certo, basta abrir a pasta 'auth-api' com o VSCode que vai dar no mesmo
+4) estando package.json aberto, adicionamos algumas dependências usando a linha de comando no próprio terminal nesse diretório, que são os seguintes comandos
+    - "yarn add express": sempre que for adicionar alguma dependência do yarn, basta colocar o comando 'yarn add' + a dependência (que nesse caso, é a dependência 'express')
+    - "yarn add cors"
+    - "yarn add jsonwebtoken"
+    - "yarn add nodemon -D": passamos a flag -D para que ele seja uma dependência apenas no desenvolvimento, ou seja, essa biblioteca não será usada em ambiente de produção porque usaremos o node normalmente. Você vai ver que com isso o arquivo package.json criou uma chave no json com o nome "devDependencies" e colocou o "nodemon" lá dentro do valor
+    - escrevi também manualmente o comando "scripts" no package.json onde definiremos qual será o nosso comando de inicialização, que será "yarn" + alguma coisa. Foi colocada a chave "startDev" com o valor "nodemon app.js"
+    - interessante saber que esse "nodemon" é uma biblioteca que faz o seguinte: sempre que você fizer alguma alteração e salva, ela irá reiniciar o servidor para gente, e assim não vamos ter que ficar parando e iniciando o servidor novamente, e por isso que ele é uma dependência apenas para o ambiente de desenvolvimento
+    - outra coisa feita na mão foi o "type" como chave que
+5) depois de feito tudo isso, criamos o nosso arquivo "app.js" manualmente, que será o arquivo onde inicializaremos o nosso servidor 
+6) depois que codamos a inicialização envolvendo o console.listen, vamos ao terminal e dar o comando "yarn startDev" e se estiver tudo OK, o servidor será inicializado com sucesso
+7) depois ainda adicionamos ao arquivo "app.js" um app.get com um "req, res", que seria uma requisição (request) e uma resposta (response)
+8) para verificar se estamos inicializando o node corretamente, tenha certeza de que o docker esteja iniciado e coloque o seguinte no seu navegador: http://localhost:8080/api/status
+    - aparecendo o seguinte conteúdo, significa que está funcionando:
+    {
+        "service": "Auth-API",
+        "status": "up",
+        "httpStatus": 200
+    }
+    - se aparecer o seguinte, foi porque você fez alguma coisa errada no seu arquivo app.son:
+    Cannot GET /api/status
+
+Com isso, temos o conteúdo dessa inicialização em node.js 
