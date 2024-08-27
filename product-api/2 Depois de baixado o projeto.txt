@@ -1,0 +1,7 @@
+Nesta etapa, temos já o projeto baixado do initializr. Faremos agora o seguinte:
+
+1. criar a pasta "product-api" e colocar essa pasta zipada dentro dele
+
+2. descompactar a pasta com o projeto 
+
+3. abrir o IntelliJ

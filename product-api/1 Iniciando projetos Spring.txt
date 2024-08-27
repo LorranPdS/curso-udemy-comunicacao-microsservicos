@@ -1,0 +1,24 @@
+Seguem abaixo os seguintes passos para a criação de um projeto Spring via Initializr
+
+1. acessar o site https://start.spring.io/
+
+2. No nosso caso, usaremos o Gradle, na linguagem Java e com a versão sugerida do Spring Boot
+
+3. iremos preencher o seguinte:
+- group: colocamos os pacotes principais "br.com." e o projeto principal "curso-udemy"
+- artifact: é o artefato do projeto, ou seja, o que irá identificar o nosso projeto. Colocamos "product-api"
+- name: ficará o mesmo nome do artifact 
+- description: descrição do que é o projeto. Coloquei "API de produtos"
+- package-name: será "br.com.projeto-udemy.product-api"
+- também colocaremos como "packing" o "jar" e usaremos o Java 17
+
+4. dependências baixadas
+- Spring Boot Dev Tools: são as principais configurações do Spring como ferramenta para o developer
+- Lombok: irá nos ajudar a abstrair os métodos getters e setters, construtores, e assim deixar nossa classe menor
+- Spring Web: irá incluir os métodos Restful e MVC do Spring e usar o Tomcat como container padrão de inicialização
+- Spring Data JPA: fará a comunicação dos nossos repositórios com o banco de dados para que não precisemos criar manualmente o CRUDR
+- PostgreSQL Driver: é o driver de conexão do banco de dados do PostgreSQL
+- Spring for RabbitMQ: é o RabbitMQ do Spring para mensagerias
+- Open Feign: nos permite fazer comumicações HTTP e clients entre aplicações
+
+5. tendo tudo preenchido, clicar no botão "Generate" que ele irá criar um pacote compactado
