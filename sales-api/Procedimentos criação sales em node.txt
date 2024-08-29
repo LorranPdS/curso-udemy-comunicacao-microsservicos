@@ -1,0 +1,16 @@
+Siga os seguintes passos:
+
+1. criar este diretório "sales-api" e abrir o console (pode ser o do Git mesmo)
+2. dar o comando "yarn init -y" pela linha de comando
+3. abrir o VSCode nesse diretório do sales-api 
+4. baixar a dependência "yarn add express"
+5. baixar a dependência "yarn add cors"
+6. baixar a dependência "yarn add jsonwebtoken"
+7. baixar a dependência "yarn add mongoose"
+8. baixar a dependência "yarn add nodemon -D"
+9. fazer manualmente o que não tiver no momento no arquivo package.json 
+10. criar o arquivo "app.js" e colocar as descrições manualmente
+11. feito isso, vá na linha de comando e vamos rodar o projeto com o comando "yarn startDev"
+12. vá no navegador e digite "http://localhost:8082/api/status"
+    Se aparecer a seguinte mensagem enquanto ele roda é porque está tudo certo
+        {"service":"Sales-API","status":"up","httpStatus":200}
