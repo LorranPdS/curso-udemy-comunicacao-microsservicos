@@ -1,0 +1,21 @@
+Nestas instruções, vamos para a criação do arquivo Dockerfile do projeto. Sendo assim, vamos às instruções:
+
+1. primeiramente, vamos no dockerhub no link "https://hub.docker.com/_/node" para pegarmos uma imagem com a versão do node 
+    - o professor pegou a versão 14 do node porém, eu quando fiz o comando "node -v", vi que eu estava com a versão 20.16.0
+    - então eu vou ver se pego a versão 20 do que foi listado no dockerhub 
+    - basicamente, a base do que vai ser feito será mais ou menos isso daqui: "https://github.com/nodejs/docker-node/blob/410410f6955bf8d052ef3ec7988cd41a54eab879/20/bookworm/Dockerfile"
+2. não vou pegar o arquivo acima, mas vou criar ele na mão. Como vamos simular o ambiente de produção, não vamos usar o yarn pelo nodemon para executar o auth-api, mas sim o próprio node 
+3. crie o arquivo Dockerfile (ele não tem extensão, e foi criado na raiz do projeto auth-api)
+4. foram feitos os preenchimentos no arquivo Dockerfile 
+5. a seguir, executar o seguinte comando estando com o console dentro do projeto "auth-api": node app.js
+    - se mostrar no console que o servidor startou com sucesso na porta 8080 foi porque deu certo
+6. agora vá no seu navegador e digite o seguinte: http://localhost:8080/api/status e se mostrar o seguinte, está OK:
+    - {"service":"Auth-API","status":"up","httpStatus":200}
+
+7. tendo feito isso, vamos fazer o build dessa imagem, e para isso, faremos o seguinte:
+    - docker image build -t auth-api .
+    - só por garantia, deixe o Docker Desktop rodando ao fazer esse comando 
+8. dê o seguinte comando para rodarmos o projeto pelo docker:
+    - docker run --name auth-api -e PORT=8080 -p 8080:8080 auth-api 
+9. vá no http://localhost:8080/api/status e veja se subiu
+10. por fim, veja se essa imagem está sendo listada no docker usando o comando "docker ps" ou veja pelo Docker Desktop se ela está sendo listada
