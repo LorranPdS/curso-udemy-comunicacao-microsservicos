@@ -1,0 +1,40 @@
+Nesta parte, iremos aprender a criar a nossa imagem de API de produto, que é a criação do project-api usando o Gradle em vez do Maven.
+
+1. caso eu tenha baixado o gradle para a minha máquina e colocado ela nas variáveis de ambiente, basta eu executar o comando "gradle -v" e verei que o Gradle está na versão 8.9
+2. segue abaixo a referência de imagem:
+    - https://hub.docker.com/_/gradle
+    - eu usarei a versão 8.7-jdk17 do Gradle no Dockerfile porque outras versões davam problema na etapa do daemon
+3. tendo isso em vista, foi criado o arquivo "Dockerfile" na raiz do projeto e fui preenchendo manualmente o arquivo
+    - FROM: é por onde nós identificamos a imagem do gerenciador de pacotes. Se eu estivesse utilizando o Maven, daí seria "maven" em vez de "gradle" e eu colocaria as versões do maven para ele
+        . eu ainda posso usar um ALIAS para o FROM colocando um "AS build" no final dele. No nosso caso não é obrigatório, ele é mais para caso haja mais de um estágio de build
+    - COPY: ele terá um ponto, espaço e outro ponto. Isso significa que ele será copiado do diretório do gradle (primeiro ponto) para dentro do diretório do java (segundo ponto)
+        . o problema é que, às vezes o gradle tem problemas com permissões, então colocamos um "chown", responsável por alterar quem será a pessoa dona dessa cópia, ou seja, quem será o "owner", e assim passar o que tiver do conteúdo "gradle" para o usuário "gradle"
+    - WORKDIR: colocamos o "ponto" por ser ele o diretório principal que estamos
+    - RUN: colocaremos o comando que é dado no terminal para fazer o build da aplicação (construção da aplicação), que é o comando "gradle build"
+        . vamos colocar também um parâmetro "-x test --no-daemon".
+        . esse "-x" é um comando no gradle para você pular alguma etapa (pular alguma step), e o que faremos é pular a step de teste porque ele toma um tempo muito grande no build tentando rodar os testes
+        . se estivéssemos usando o maven, colocaríamos algo como "RUN mvn clean install -DskipTests"
+        . quanto ao "--no-daemon" é para que não seja utilizado o daemon no gradle porque também é algo que demora muito no nosso build, então como no Java já é um build demorado, tiramos essas duas opções para simplificarmos as coisas
+    - EXPOSE: nela vamos dizer em qual porta a nossa API será exposta para rodar (8081)
+    - CMD: tem a ver com o comando a ser dado para rodar o projeto.
+        . então ao passar pelas steps, ele dará o comando "gradle bootRun", que é o comando que nós damos quando queremos rodar a API localmente pelo CMD (tela preta)
+
+4. finalizada a criação do Dockerfile na raiz do projeto, iremos executar o seguinte comando para a criação da imagem estando dentro do diretório raiz do projeto "product-api":
+    - docker image build -t product-api .
+    - com isso iremos construir uma imagem do nosso projeto "product-api" e o "ponto" no final indica que faremos isso em t0do o conteúdo, já que estamos executando na raiz do projeto
+    - agora você irá notar que, após esse comando, ele irá passar pelas etapas do que foi criado no arquivo "Dockerfile", que são as steps do FROM, COPI, WORKDIR, RUN, EXPOSE e CMD
+    - lembre-se de deixar o Docker Desktop aberto (se o estiver usando)
+
+5. depois de finalizada a transformação do projeto em imagem, faremos o seguinte comando estando na mesma raiz para rodarmos nosso projeto:
+    - docker run --name product-api -p 8081:8081 product-api
+    - com o comando acima, criaremos um container para essa imagem e assim o projeto irá rodar no "Docker Desktop"
+    - o primeiro "product-api" que encontramos no comando é relativo ao nome a ser exibido na listagem de containers, e o segundo indica qual é a imagem que iremos rodar (já que foi esse o nome que damos para a imagem no comando de build anteriormente)
+
+6. feito esse comando, ele já estará rodando o projeto pelo Docker. Os logs até serão exibidos para nós mas saiba que ele não está rodando pelo IntelliJ mas sim pelo Docker
+    - caso do Docker Desktop esteja fechado, abra-o (ou talvez usando as linhas de comando, você consiga gerenciar também)
+
+7. vá lá no navegador e coloque o seguinte: http://localhost:8081/api/status
+    - se estiver sendo exibido o seguinte conteúdo, significa que está funcionando
+    {"service":"Product-Api","httpStatus":200,"status":"up"}
+
+8. por fim, o que faremos é subir todas as APIs usando o arquivo docker-compose em vez de ficar indo de projeto em projeto
