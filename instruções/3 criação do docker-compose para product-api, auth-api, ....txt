@@ -1,0 +1,39 @@
+O docker-compose tem como finalidade rodar vários serviços num comando só sem precisar ficar subindo serviço a serviço. Isso poupa bastante tempo e é muito mais fácil.
+
+Nestas instruções, irei montar o docker-compose, agora com os projetos auth-api, product-api e sales-api, que são projetos de linguagem de programação:
+
+1. vamos começar pelo auth-api
+- você verá que o modelo de preenchimento segue a maneira como fizemos o Dockerfile dentro de cada projeto
+- no caso do auth-api, então vamos olhando configuração de porta (que está 8080 no Dockerfile dele) e vamos colocando aqui no docker-compose dele 
+- comparando com o que está no container do auth-db, não teremos uma imagem dele mas sim um arquivo de build após o comando de build do projeto e não uma imagem que está no Dockerhub, então será tirado o "image" dele e posto "build"
+- então trocaremos o campo "image" pelo "build" e, como o arquivo docker-compose está no diretório raiz, vamos direcionar o caminho desse build para o caminho do "auth-api" onde está o Dockerfile, que é o caminho './auth-api'
+- o campo "container_name" será o nome exibido do container 
+- não teremos o comando "restart: always"
+- na parte de "environments" (variáveis de ambiente), vamos configurar apenas a variável de ambiente PORT, que foi a variável de ambiente configurada no arquivo "app.js", e vamos preencher com 8080
+- em "ports", iremos colocar a porta interna como 8080 e a porta externa como 8080, logo ficará 8080:8080... importante que nada esteja rodando nesta porta que não seja esse projeto ou vai dar problema
+
+2. quanto ao product-api 
+- vai seguir exatamente a mesma ideia do auth-api mas para seus modelos próprios de caminho, portas e nome do container 
+- nesse projeto, definimos no Dockerfile que ele está na porta 8081, então vamos preencher tudo como 8081
+- algo bem interessante é que lá no nosso arquivo de configuração do Spring, nós não chegamos a configurar uma variável de ambiente, então lá iremos configurar uma variável de ambiente para a porta 8081
+- vamos supor que vamos querer usar esse projeto em outro ambiente mas nesse ambiente a porta 8081 já esteja sendo utilizada... se estiver nessa situação, deixando o arquivo de configuração "application.yml" com o "port: ${PORT:8081}" e o arquivo do Spring vai entender o que quer dizer
+- então se, por acaso o projeto rodar sem uma variável de ambiente, a maneira como foi configurada vai definir a porta como 8081
+
+3. quanto ao sales-api
+- vai seguir exatamente a mesma ideia do auth-api mas para seus modelos próprios de caminho, portas e nome do container
+- no caso, as portas que definimos no Dockerfile e no arquivo "app.js" foi 8082
+
+4. colocando todos os projetos pra subir ao mesmo tempo com docker-compose
+- antes de tudo, lembrar de remover todos os containers que estiverem já listados aqui, ou seja, vá no Docker Desktop e apague de preferência os 3 containers que são build, que são "auth-api", "product-api" e "sales-api"
+- feito isso, abra o terminal (cmd, tela preta) no mesmo local em que está o arquivo "docker-compose" para darmos o comando para subir com todos os projetos 
+- agora digite o seguinte comando no terminal para executar o docker-compose: "docker-compose up --build"
+        Obs.: não testei ainda, mas caso já existam os containers e todos eles estejam apenas parados, tente executar apenas "docker-compose up"
+- esse processo do comando do docker-compose é meio demorado mesmo
+- na situação do professor, ele não conseguiu rodar o mongo e disse que o motivo devia ser por causa do volume no PC dele que estava dopado... para resolver isso, ele falou que era só rodar o comando "docker volume prune" que ele removerá todos os volumes (A NÃO SER QUE você tenha algum volume aí dentro que você não pode remover, mas pra estudos não teria problema, mas pra Produção talvez)
+- por fim, terminando de rodar o docker-compose, verifique se os 3 projetos estão funcionando indo no navegador e digitando o seguinte:
+    . http://localhost:8080/api/status
+    . http://localhost:8081/api/status
+    . http://localhost:8080/api/status
+- se retornar a resposta, significa que está tudo OK
+- interessante verificar também o mongo, o rabbit e os bancos de dados
+- por linha de comando no terminal, conseguimos também saber se os serviços listados acima estão rodando com o seguinte comando: "docker logs --follow nome_do_container", exemplo, "docker logs --follow product-api"
