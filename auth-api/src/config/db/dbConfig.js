@@ -21,7 +21,7 @@
 import Sequelize from "sequelize";
 
 // 6. esse "1y5h8j" é uma senha aleatória
-const sequelize = new Sequelize("auth-db", "postgres", "1y5h8j", {
+const sequelize = new Sequelize("auth-db", "admin", "123456", {
     host: "localhost",
     dialect: "postgres",
     quoteIdentifiers: false,
@@ -37,10 +37,10 @@ const sequelize = new Sequelize("auth-db", "postgres", "1y5h8j", {
 sequelize
 .authenticate()
 .then(() => {
-    console.log('Connection has been stabilished:');
+    console.info("Connection has been stabilished:");
 })
 .catch((err) => {
-    console.error('Unable to connect to the database.');
+    console.error("Unable to connect to the database.");
     console.error(err.message);
 });
 
