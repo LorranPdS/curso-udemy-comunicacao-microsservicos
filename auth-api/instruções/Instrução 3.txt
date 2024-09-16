@@ -1,0 +1,15 @@
+Fazendo o envio de requisição para geração de Token
+
+1. subir o serviço 'auth-api' com o comando "yarn startDev"
+2. subir o container de banco de dados 'auth-db'
+3. abrir o Postman
+4. colar o seguinte no Postman:
+
+curl --location 'http://localhost:8080/api/user/auth' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "testeuser@gmail.com",
+    "password": "123456"
+}'
+
+5. gerado o token, acessar o site https://jwt.io/ e colar o token apenas para você vê-lo descriptografado
