@@ -1,0 +1,29 @@
+ADICIONANDO O MIDDLEWARE DE AUTENTICAÇÃO
+
+Após subir o projeto e subir o banco de dados auth-db no docker, vamos fazer umas requisições usando o Postman.
+
+Num primeiro momento, iremos acessar "http://localhost:8080/api/user/auth" para gerar o nosso Token
+
+curl --location 'http://localhost:8080/api/user/auth' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "testeuser@gmail.com",
+    "password": "123456"
+}'
+
+Você vai copiar o resultado da mensagem do Token exibido para o endpoint abaixo
+
+---------
+
+Após fazermos o acesso ao sistema usando email e senha, vamos verificar o status do sistema usando "http://localhost:8080/api/status"
+
+curl --location 'http://localhost:8080/api/status' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoVXNlciI6eyJpZCI6MSwibmFtZSI6IlVzZXIgVGVzdCIsImVtYWlsIjoidGVzdGV1c2VyQGdtYWlsLmNvbSJ9LCJpYXQiOjE3MjY3Nzc1NjMsImV4cCI6MTcyNjg2Mzk2M30.IOibZ0YHAhm4vF0oC7tv66zeZv7DflFFO_MzsGhyZ-g' \
+--data ''
+
+Então aqui conseguimos fazer algumas validações:
+1. se você colocar o bearer no Header do Postman iniciando com minúsculo, maiúsculo ou mesmo sem colocar, ele autentica normalmente, nos retornando 200
+2. se você deixar o Authorization mas apagar o Token, vai apresentar um erro de autenticação
+
+---------
