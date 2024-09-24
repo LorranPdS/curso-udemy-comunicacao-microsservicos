@@ -1,0 +1,4 @@
+IMPLEMENTANDO SEGURANÇA NOS ENDPOINTS
+
+Interessante saber que esses tokens de autenticação serão implementados para as API product-api e sales-api, então o foco em se criar a segurança e as autenticações estão para os outros projetos a usarem.
+
