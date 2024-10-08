@@ -26,4 +26,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "FK_CATEGORY")
     private Category category;
+
+    @Column(name = "QUANTITY_AVAILABLE", nullable = false)
+    private Integer quantityAvailable;
 }
