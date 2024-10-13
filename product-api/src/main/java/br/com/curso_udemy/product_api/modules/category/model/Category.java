@@ -1,6 +1,6 @@
-package br.com.curso_udemy.product_api.modules.produto.model;
+package br.com.curso_udemy.product_api.modules.category.model;
 
-import br.com.curso_udemy.product_api.modules.produto.dto.CategoryRequest;
+import br.com.curso_udemy.product_api.modules.category.dto.CategoryRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

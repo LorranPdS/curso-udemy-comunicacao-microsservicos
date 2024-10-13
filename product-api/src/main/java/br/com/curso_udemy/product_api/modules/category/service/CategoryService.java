@@ -1,13 +1,13 @@
-package br.com.curso_udemy.product_api.modules.produto.service;
+package br.com.curso_udemy.product_api.modules.category.service;
 
 import br.com.curso_udemy.product_api.config.exception.ValidationException;
-import br.com.curso_udemy.product_api.modules.produto.dto.CategoryRequest;
-import br.com.curso_udemy.product_api.modules.produto.dto.CategoryResponse;
-import br.com.curso_udemy.product_api.modules.produto.model.Category;
-import br.com.curso_udemy.product_api.modules.produto.repository.CategoryRepository;
+import br.com.curso_udemy.product_api.modules.category.dto.CategoryRequest;
+import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
+import br.com.curso_udemy.product_api.modules.category.model.Category;
+import br.com.curso_udemy.product_api.modules.category.repository.CategoryRepository;
+import br.com.curso_udemy.product_api.modules.supplier.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -40,6 +40,12 @@ public class CategoryService {
         validateCategoryNameInformed(request);
         var category = categoryRepository.save(Category.of(request));
         return CategoryResponse.of(category);
+    }
+
+    public Category findById(Integer id){
+        return categoryRepository
+                .findById(id)
+                .orElseThrow(() -> new ValidationException("There's no category for the given id"));
     }
 
     private void validateCategoryNameInformed(CategoryRequest request){

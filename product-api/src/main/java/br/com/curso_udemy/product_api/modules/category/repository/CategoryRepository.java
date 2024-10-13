@@ -1,6 +1,6 @@
-package br.com.curso_udemy.product_api.modules.produto.repository;
+package br.com.curso_udemy.product_api.modules.category.repository;
 
-import br.com.curso_udemy.product_api.modules.produto.model.Category;
+import br.com.curso_udemy.product_api.modules.category.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /*
