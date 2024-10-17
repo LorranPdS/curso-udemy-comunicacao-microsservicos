@@ -8,11 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder // o @Builder nos exige que tenhamos um construtor, por isso coloquei abaixo
+@NoArgsConstructor
 @AllArgsConstructor
 public class ProductResponse {
 
@@ -20,6 +22,7 @@ public class ProductResponse {
     private String name;
     private SupplierResponse supplier; // coloquei 'supplier' para que venha assim no JSON
     private CategoryResponse category; // a mesma coisa fiz com o 'category'
+    @JsonProperty("quantity_available")
     private Integer quantityAvailable;
 
     /*

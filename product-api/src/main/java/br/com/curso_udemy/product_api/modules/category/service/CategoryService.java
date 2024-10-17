@@ -5,9 +5,11 @@ import br.com.curso_udemy.product_api.modules.category.dto.CategoryRequest;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
 import br.com.curso_udemy.product_api.modules.category.model.Category;
 import br.com.curso_udemy.product_api.modules.category.repository.CategoryRepository;
-import br.com.curso_udemy.product_api.modules.supplier.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -30,6 +32,30 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+        public CategoryResponse findByIdResponse(Integer id){
+            return CategoryResponse.of(findById(id));
+    }
+
+    public List<CategoryResponse> findAll(){
+        return categoryRepository
+                .findAll()
+                .stream()
+                .map(CategoryResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoryResponse> findByDescription(String description){
+        if(isEmpty(description)){
+            throw new ValidationException("The category description must be informed.");
+        }
+        return categoryRepository
+                .findByDescriptionIgnoreCaseContaining(description)
+                .stream()
+                .map(CategoryResponse::of)
+                // Acima também pode ser assim: .map(category -> CategoryResponse.of(category))
+                .collect(Collectors.toList());
+    }
+
     /*
     Então veja que:
     - iremos enviar uma request (um DTO)
@@ -43,6 +69,9 @@ public class CategoryService {
     }
 
     public Category findById(Integer id){
+        if(isEmpty(id)){
+            throw new ValidationException("The category ID was not informed.");
+        }
         return categoryRepository
                 .findById(id)
                 .orElseThrow(() -> new ValidationException("There's no category for the given id"));
