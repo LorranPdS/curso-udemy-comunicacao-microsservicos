@@ -1,5 +1,6 @@
 package br.com.curso_udemy.product_api.modules.category.controller;
 
+import br.com.curso_udemy.product_api.config.exception.SuccessResponse;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryRequest;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
@@ -54,4 +55,15 @@ public class CategoryController {
     public List<CategoryResponse> findByDescription(@PathVariable String description){
         return categoryService.findByDescription(description);
     }
+
+    @PutMapping("{id}")
+    public CategoryResponse update(@RequestBody CategoryRequest request, @PathVariable Integer id){
+        return categoryService.update(request, id);
+    }
+
+    @DeleteMapping("{id}")
+    public SuccessResponse delete(@PathVariable Integer id){
+        return categoryService.delete(id);
+    }
+
 }

@@ -1,5 +1,6 @@
 package br.com.curso_udemy.product_api.modules.product.service;
 
+import br.com.curso_udemy.product_api.config.exception.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exception.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
@@ -56,17 +57,12 @@ public class ProductService {
     }
 
     public ProductResponse findByIdResponse(Integer id){
-        if(isEmpty(id)){
-            throw new ValidationException("The product ID must be informed.");
-        }
-
+        validateInformedId(id);
         return ProductResponse.of(findByid(id));
     }
 
     public Product findByid(Integer id){
-        if(isEmpty(id)){
-            throw new ValidationException("The product ID must be informed.");
-        }
+        validateInformedId(id);
         return productRepository
                 .findById(id)
                 .orElseThrow(() -> new ValidationException("There's no product for the given ID."));
@@ -78,6 +74,18 @@ public class ProductService {
         var category = categoryService.findById(request.getCategoryId());
         var supplier = supplierService.findById(request.getSupplierId());
         var product = productRepository.save(Product.of(request, supplier, category));
+        return ProductResponse.of(product);
+    }
+
+    public ProductResponse update(ProductRequest request, Integer id){
+        validateProductDataInformed(request);
+        validateCategoryAndSupplierIdInformed(request);
+        validateInformedId(id);
+        var category = categoryService.findById(request.getCategoryId());
+        var supplier = supplierService.findById(request.getSupplierId());
+        var product = Product.of(request, supplier, category);
+        product.setId(id);
+        productRepository.save(product);
         return ProductResponse.of(product);
     }
 
@@ -127,5 +135,25 @@ public class ProductService {
                 .stream()
                 .map(ProductResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    public SuccessResponse delete(Integer id){
+        validateInformedId(id);
+        productRepository.deleteById(id);
+        return SuccessResponse.create("The product was deleted.");
+    }
+
+    private void validateInformedId(Integer id) {
+        if(isEmpty(id)){
+            throw new ValidationException("The product ID must be informed.");
+        }
+    }
+
+    public Boolean existsByCategoryId(Integer categoryId){
+        return productRepository.existsByCategoryId(categoryId);
+    }
+
+    public Boolean existsBySupplierId(Integer supplierId){
+        return productRepository.existsBySupplierId(supplierId);
     }
 }

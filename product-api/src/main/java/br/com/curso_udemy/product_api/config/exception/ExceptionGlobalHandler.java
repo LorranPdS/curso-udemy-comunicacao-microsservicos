@@ -17,4 +17,5 @@ public class ExceptionGlobalHandler {
         details.setStatus(HttpStatus.BAD_REQUEST.value());
         details.setMessage(validationException.getMessage());
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
-    }}
+    }
+}
