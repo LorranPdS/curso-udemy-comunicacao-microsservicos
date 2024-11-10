@@ -5,6 +5,7 @@ import br.com.curso_udemy.product_api.config.exception.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductStockDto;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
@@ -155,5 +156,9 @@ public class ProductService {
 
     public Boolean existsBySupplierId(Integer supplierId){
         return productRepository.existsBySupplierId(supplierId);
+    }
+
+    public void updateProductStock(ProductStockDto product){
+
     }
 }
