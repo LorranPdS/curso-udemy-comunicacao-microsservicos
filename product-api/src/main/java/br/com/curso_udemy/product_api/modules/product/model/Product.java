@@ -60,4 +60,8 @@ public class Product {
                 .quantityAvailable(request.getQuantityAvailable())
                 .build();
     }
+
+    public void updateStock(Integer quantity){
+        quantityAvailable = quantityAvailable - quantity;
+    }
 }

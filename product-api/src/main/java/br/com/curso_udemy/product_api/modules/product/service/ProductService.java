@@ -3,20 +3,27 @@ package br.com.curso_udemy.product_api.modules.product.service;
 import br.com.curso_udemy.product_api.config.exception.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exception.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductQuantityDto;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductStockDto;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
+import br.com.curso_udemy.product_api.modules.sales.dto.SalesConfirmationDTO;
+import br.com.curso_udemy.product_api.modules.sales.enums.SalesStatus;
+import br.com.curso_udemy.product_api.modules.sales.rabbitmq.SalesConfirmationSender;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -36,6 +43,9 @@ public class ProductService {
     // A mesma lógica feita com o Supplier foi feita aqui com o Category
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SalesConfirmationSender salesConfirmationSender;
 
     public List<ProductResponse> findAll(){
         return productRepository
@@ -159,6 +169,48 @@ public class ProductService {
     }
 
     public void updateProductStock(ProductStockDto product){
+        try {
+            validateStockUpdateData(product);
+            updateStock(product);
 
+        } catch (Exception ex){
+            log.error("Error while trying to update stock for message with error: {}", ex.getMessage(), ex);
+            var rejectedMessage = new SalesConfirmationDTO(product.getSalesId(), SalesStatus.REJECT);
+            salesConfirmationSender.sendSalesConfirmationMessage(rejectedMessage);
+        }
+    }
+
+    private void updateStock(ProductStockDto product){
+        product
+                .getProducts()
+                .forEach(salesProduct -> {
+                    var existingProduct = findByid(salesProduct.getProductId());
+                    validateQuantityInStock(salesProduct, existingProduct);
+                    existingProduct.updateStock(salesProduct.getQuantity());
+                    productRepository.save(existingProduct);
+                    var approvedMessage = new SalesConfirmationDTO(product.getSalesId(), SalesStatus.APPROVED);
+                    salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+                });
+    }
+
+    @Transactional
+    private void validateStockUpdateData(ProductStockDto product){
+        if(isEmpty(product) || isEmpty(product.getSalesId())){
+            throw new ValidationException("The product data and the sales ID must be informed.");
+        }
+        if(isEmpty(product.getProducts())){
+            throw new ValidationException("The sale's products must be informed.");
+        }
+        product.getProducts().forEach(salesProduct -> {
+            if(isEmpty(salesProduct.getQuantity()) || isEmpty(salesProduct.getProductId())){
+                throw new ValidationException("The product ID and the quantity must be informed.");
+            }
+        });
+    }
+
+    private void validateQuantityInStock(ProductQuantityDto salesProduct, Product existingProduct){
+        if(salesProduct.getQuantity() > existingProduct.getQuantityAvailable()){
+            throw new ValidationException(String.format("The product %s is out of stock.", existingProduct.getId()));
+        }
     }
 }
