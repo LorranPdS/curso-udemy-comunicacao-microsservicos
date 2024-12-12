@@ -3,12 +3,10 @@ package br.com.curso_udemy.product_api.modules.product.service;
 import br.com.curso_udemy.product_api.config.exception.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exception.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductQuantityDto;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductStockDto;
+import br.com.curso_udemy.product_api.modules.product.dto.*;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
+import br.com.curso_udemy.product_api.modules.sales.client.SalesClient;
 import br.com.curso_udemy.product_api.modules.sales.dto.SalesConfirmationDTO;
 import br.com.curso_udemy.product_api.modules.sales.enums.SalesStatus;
 import br.com.curso_udemy.product_api.modules.sales.rabbitmq.SalesConfirmationSender;
@@ -18,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +45,9 @@ public class ProductService {
 
     @Autowired
     private SalesConfirmationSender salesConfirmationSender;
+
+    @Autowired
+    private SalesClient salesClient;
 
     public List<ProductResponse> findAll(){
         return productRepository
@@ -181,16 +183,30 @@ public class ProductService {
     }
 
     private void updateStock(ProductStockDto product){
+        var productsForUpdate = new ArrayList<Product>();
         product
                 .getProducts()
                 .forEach(salesProduct -> {
                     var existingProduct = findByid(salesProduct.getProductId());
                     validateQuantityInStock(salesProduct, existingProduct);
                     existingProduct.updateStock(salesProduct.getQuantity());
-                    productRepository.save(existingProduct);
-                    var approvedMessage = new SalesConfirmationDTO(product.getSalesId(), SalesStatus.APPROVED);
-                    salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+                    productsForUpdate.add(existingProduct);
                 });
+        if(!isEmpty(productsForUpdate)){
+            /*
+                Observação importante: usar o '.saveAll(...) após listas sempre que possível
+                Por esse motivo também a lógica foi alterada porque, estávamos sempre passando
+                pelo 'forEach', salvando um a um e tendo 3 interações separadas com o banco de dados,
+                listando 3 vezes nos logs e essa não é uma boa prática.
+
+                Com o 'saveAll(...)', salvamos tudo que temos que salvar no banco de dados
+                com apenas uma transação, e assim o hibernate trabalha com o banco de forma mais
+                autônoma no save
+             */
+            productRepository.saveAll(productsForUpdate);
+            var approvedMessage = new SalesConfirmationDTO(product.getSalesId(), SalesStatus.APPROVED);
+            salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+        }
     }
 
     @Transactional
@@ -211,6 +227,17 @@ public class ProductService {
     private void validateQuantityInStock(ProductQuantityDto salesProduct, Product existingProduct){
         if(salesProduct.getQuantity() > existingProduct.getQuantityAvailable()){
             throw new ValidationException(String.format("The product %s is out of stock.", existingProduct.getId()));
+        }
+    }
+
+    public ProductSalesResponse findProductSales(Integer id){
+        try{
+            var product = findByid(id);
+            var sales = salesClient.findSalesByProductId(product.getId())
+                    .orElseThrow(() -> new ValidationException("The sales was not found by this product."));
+            return ProductSalesResponse.of(product, sales.getSalesIds());
+        }catch (Exception ex){
+            throw new ValidationException("There was an error trying to get the product's sales.");
         }
     }
 }
