@@ -1,6 +1,7 @@
 package br.com.curso_udemy.product_api.modules.product.controller;
 
 import br.com.curso_udemy.product_api.config.exception.SuccessResponse;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductCheckStockRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductSalesResponse;
@@ -56,6 +57,17 @@ public class ProductController {
     @DeleteMapping("{id}")
     public SuccessResponse delete(@PathVariable Integer id){
         return productService.delete(id);
+    }
+
+    /*
+        Quem irá chamar o endpoint abaixo "é o SalesAPI" e ele irá chamar toda vez que for
+        fazer uma compra, antes ele precisará bater nessa aplicação informando os produtos
+        que nós queremos e as quantidades, se estão todos OK ou se tem algum que não tem
+        estoque
+     */
+    @PostMapping("check-stock")
+    public SuccessResponse checkProductStock(@RequestBody ProductCheckStockRequest request){
+        return productService.checkProductsStock(request);
     }
 
     @GetMapping("{id}/sales")
